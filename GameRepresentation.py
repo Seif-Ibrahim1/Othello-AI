@@ -45,11 +45,6 @@ class GameBoard:
             print("Game is finished!")
             return True
 
-        # if the both of player are stuck
-        if not self.can_make_move(self.player1.color) and not self.can_make_move(self.player2.color):
-            print("Game is finished!")
-            return True
-
         return False
 
     def is_valid_move(self, x, y, Player):
@@ -66,13 +61,6 @@ class GameBoard:
             return False
 
         return True
-
-    def can_make_move(self, Player):
-        for i in range(8):
-            for j in range(8):
-                if self.is_valid_move(i, j, Player):
-                    return True
-        return False
 
     def check_direction(self, x, y, Player):
         # create an empty list to store the coordinates of the cells that will be flipped
