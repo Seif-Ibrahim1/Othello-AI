@@ -12,7 +12,17 @@ class GameBoard:
         self.board[4][3] = "B"
 
     def print_board(self):
-        print(self.board)
+        print("  0 1 2 3 4 5 6 7")
+        for i in range(8):
+            print(i, end=" ")
+            for j in range(8):
+                if self.board[i][j] == "-":
+                    print(".", end=" ")
+                elif self.board[i][j] == "W":
+                    print("W", end=" ")
+                else:
+                    print("B", end=" ")
+            print()
 
     def check_boundary(self, x, y, player):
         # This condition is for ensuring that the move is inside the board
@@ -80,3 +90,6 @@ class GameBoard:
     def get_result(self):
         if self.is_over():
             return self.get_winner()
+
+game = GameBoard()
+game.print_board()
