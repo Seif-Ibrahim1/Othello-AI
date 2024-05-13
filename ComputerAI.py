@@ -1,6 +1,7 @@
 import math
 from GameRepresentation import GameBoard
 from Player import Player
+from Move import Move
 class Computer(Player):
     def __init__(self, color, depth=3):
         super().__init__(color)
@@ -16,7 +17,8 @@ class Computer(Player):
 
         if maximizing:
             maxVal = -math.inf
-            available_moves = board.getAvailableMoves(self)
+            
+            available_moves = Move(board.board).get_available_moves(self)
             print("Available moves: ", available_moves)
             played_moves = {}
             for move in available_moves:
@@ -24,7 +26,7 @@ class Computer(Player):
                 tmpBoard = board
                 # copy the ND array by value
                 tmpBoard.board = board.board.copy()
-                tmpBoard.move(move[0], move[1], self)
+                Move(tmpBoard.board).move(move[0], move[1], self)
                 val = self.alpha_beta(tmpBoard, depth - 1, alpha, beta, False)
                 played_moves[val] = move
                 maxVal = max(maxVal, val)
@@ -39,13 +41,13 @@ class Computer(Player):
         else:
             otherPlayer = board.player1 if self.color == board.player2.color else board.player2
             minVal = math.inf
-            available_moves = board.getAvailableMoves(otherPlayer)
+            available_moves = Move(board.board).get_available_moves(otherPlayer)
             for move in available_moves:
                 tmpBoard = GameBoard()
                 tmpBoard = board
                 # copy the ND array by value
                 tmpBoard.board = board.board.copy()
-                tmpBoard.move(move[0], move[1], otherPlayer)
+                Move(tmpBoard.board).move(move[0], move[1], otherPlayer)
                 val = self.alpha_beta(tmpBoard, depth - 1, alpha, beta ,True)
                 minVal = min(minVal, val)
                 beta = min(beta, val)
