@@ -21,7 +21,7 @@ class GameBoard:
             print(i, end=" ")
             for j in range(8):
                 if self.board[i][j] == "-":
-                    print(".", end=" ")
+                    print("-", end=" ")
                 elif self.board[i][j] == "W":
                     print("W", end=" ")
                 else:
@@ -95,3 +95,19 @@ class GameBoard:
         self.board[x][y] = Player.color
         for x_temp, y_temp in flipped_pieces:
             self.board[x_temp][y_temp] = Player.color
+
+    def get_score(self):
+        score = {"B": 0, "W": 0}
+        for x in range(8):
+            for y in range(8):
+                if self.board[x][y] != "-":
+                    score[self.board[x][y]] += 1
+        return score
+
+    def get_winner(self):
+        score = self.get_score()
+        if score["B"] > score["W"]:
+            return "B"
+        elif score["B"] < score["W"]:
+            return "W"
+        return "Draw"
