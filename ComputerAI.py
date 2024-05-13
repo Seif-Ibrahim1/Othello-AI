@@ -2,22 +2,31 @@ import math
 from GameRepresentation import GameBoard
 from Player import Player
 class Computer(Player):
-    def __init__(self, color, depth=1):
+    def __init__(self, color, depth=3):
         super().__init__(color)
         self.depth = depth
+        self.played = None
 
     def alpha_beta(self, board, depth, alpha, beta, maximizing):
         if depth == 0 or board.is_game_over():
-            return 1     # return valuation of position
+            if maximizing:
+                return board.get_utility(self)
+            else:
+                return board.get_utility(board.player1 if self.color == board.player2.color else board.player2)    # return valuation of position
 
         if maximizing:
             maxVal = -math.inf
             available_moves = []
             for i in range(8):
                 for j in range(8):
-                    if board.is_valid_move(i, j, self):
+                    tmpBoard = GameBoard()
+                    tmpBoard.board = board.board.copy()
+                    tmpBoard.player1 = board.player1
+                    tmpBoard.player2 = board.player2
+                    if tmpBoard.is_valid_move(i, j, self):
                         available_moves.append((i, j))
 
+            print("Available moves: ", available_moves)
             played_moves = {}
             for move in available_moves:
                 tmpBoard = GameBoard()
@@ -31,7 +40,9 @@ class Computer(Player):
                 alpha = max(alpha, val)
                 if beta <= alpha:
                     break
-            self.played = move
+
+            if maxVal != -math.inf:  
+                self.played = played_moves.get(maxVal, None)
             return maxVal
     
         else:
@@ -40,7 +51,11 @@ class Computer(Player):
             available_moves = []
             for i in range(8):
                 for j in range(8):
-                    if self.board.is_valid_move(i, j, otherPlayer):
+                    tmpBoard = GameBoard()
+                    tmpBoard.board = board.board.copy()
+                    tmpBoard.player1 = board.player1
+                    tmpBoard.player2 = board.player2
+                    if tmpBoard.is_valid_move(i, j, otherPlayer):
                         available_moves.append((i, j))
             for move in available_moves:
                 tmpBoard = GameBoard()
@@ -55,6 +70,15 @@ class Computer(Player):
                     break
             return minVal
         
+    def set_depth(self, depth):
+        self.depth = depth
+        
     def play(self, board):
-        self.alpha_beta(board, self.depth, -math.inf, math.inf, True)
+        tmpBoard = GameBoard()
+        tmpBoard.board = board.board.copy()
+        tmpBoard.player1 = board.player1
+        tmpBoard.player2 = board.player2
+
+        self.alpha_beta(tmpBoard, self.depth, -math.inf, math.inf, True)
+        print("Computer played: ", self.played)
         return self.played
