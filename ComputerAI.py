@@ -19,7 +19,6 @@ class Computer(Player):
             maxVal = -math.inf
             
             available_moves = Move(board.board).get_available_moves(self)
-            print("Available moves: ", available_moves)
             played_moves = {}
             for move in available_moves:
                 tmpBoard = GameBoard()
