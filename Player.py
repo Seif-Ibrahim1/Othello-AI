@@ -8,10 +8,3 @@ class Player:
 
     def get_score(self):
         return self.score
-
-    def get_utility(self, player):
-        score = self.get_score()
-        if player == "B":
-            return score["B"] - score["W"]
-        else:
-            return score["W"] - score["B"]

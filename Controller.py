@@ -2,13 +2,14 @@ import random
 
 from GameRepresentation import GameBoard
 from Player import Player
+from ComputerAI import Computer
 
 
 class Controller:
     def __init__(self):
         self.game = GameBoard()
         self.current_player = Player
-        self.computer_player = Player
+        self.computer_player = Computer
         self.is_player_turn = True
         self.difficulty_level = "medium"
 
@@ -17,16 +18,22 @@ class Controller:
             color_choice = input("Choose Your Color ('B' or 'W'): ").upper()
             if color_choice in ["B", "W"]:
                 self.current_player = Player(color_choice)
-                self.computer_player = Player("W") if color_choice == "B" else Player("B")
+                self.computer_player = Computer("W") if color_choice == "B" else Computer("B")
+
+                difficulty_choice = input("Choose Your Difficulty Level ('easy' or 'medium' or 'hard'): ").lower()
+                if difficulty_choice in ["easy", "medium", "hard"]:
+                    if difficulty_choice == "hard":
+                        self.computer_player.depth = 3
+                    elif difficulty_choice == "medium":
+                        self.computer_player.depth = 2
+                    elif difficulty_choice == "easy":
+                        self.computer_player.depth = 1
+                    
+                    break
+                else:
+                    print("Invalid Difficulty Choice!")
             else:
                 print("Invalid Color Choice!")
-
-            difficulty_choice = input("Choose Your Difficulty Level ('easy' or 'medium' or 'hard'): ").lower()
-            if difficulty_choice in ["easy", "medium", "hard"]:
-                self.difficulty_level = difficulty_choice
-                break
-            else:
-                print("Invalid Difficulty Choice!")
 
     def get_user_move(self):
         while True:
@@ -50,23 +57,23 @@ class Controller:
                 # by using alpha-beta code
                 return self.get_hard_move()
 
-    def get_easy_move(self):
-        valid_moves = []
-        for x in range(8):
-            for y in range(8):
-                if self.game.is_valid_move(x, y, self.computer_player):
-                    valid_moves.append((x, y))
-        # select any random valid move
-        return random.choice(valid_moves) if valid_moves else None
+    # def get_easy_move(self):
+    #     valid_moves = []
+    #     for x in range(8):
+    #         for y in range(8):
+    #             if self.game.is_valid_move(x, y, self.computer_player):
+    #                 valid_moves.append((x, y))
+    #     # select any random valid move
+    #     return random.choice(valid_moves) if valid_moves else None
 
-    def get_medium_move(self):
-        valid_moves = []
-        for x in range(8):
-            for y in range(8):
-                if self.game.is_valid_move(x, y, self.current_player):
-                    valid_moves.append((x, y))
-        # will add heuristic function
-        return valid_moves[0] if valid_moves else None
+    # def get_medium_move(self):
+    #     valid_moves = []
+    #     for x in range(8):
+    #         for y in range(8):
+    #             if self.game.is_valid_move(x, y, self.current_player):
+    #                 valid_moves.append((x, y))
+    #     # will add heuristic function
+    #     return valid_moves[0] if valid_moves else None
 
     def play(self):
         print("Welcome To Othello Game!")
@@ -82,7 +89,13 @@ class Controller:
                 self.game.move(row, col, self.current_player)
             else:
                 print(f"Computer's Turn :")
-                row, col = self.get_computer_move()
+                coords = self.computer_player.play(self.game)
+                if coords is None:
+                    print("Computer has no valid moves. Skipping turn.")
+                    self.is_player_turn = not self.is_player_turn
+                    continue
+
+                row, col = coords
                 self.game.move(row, col, self.computer_player)
 
             # Display the updated board
@@ -90,7 +103,7 @@ class Controller:
             self.game.print_board()
             print("Scores :")
             score = self.game.get_score()
-            print(f"Black Score = {score["B"]}\nWhite Score = {score['W']}")
+            # print(f"Black Score = {score["B"]}\nWhite Score = {score['W']}")
 
             # change turns
             self.is_player_turn = not self.is_player_turn
