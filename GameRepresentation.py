@@ -40,22 +40,18 @@ class GameBoard:
     def is_game_over(self):
         # if all the cells are filled
         if "-" not in self.board:
-            print("Game is finished!")
             return True
         # if the both of player has score of 0
         if self.player1.get_score() == 0 and self.player2.get_score() == 0:
-            print("Game is finished!")
             return True
 
         return False
 
     def is_valid_move(self, x, y, Player):
         if x < 0 or x > 7 or y < 0 or y > 7:
-            print("Invalid coordinates!, out of range")
             return False
 
         if self.board[x][y] != "-":
-            print("It is not an empty cell!")
             return False
 
         availableMoves = self.getAvailableMoves(Player)
