@@ -32,8 +32,8 @@ class GameBoard:
         # if all the cells are filled
         if "-" not in self.board:
             return True
-        # if the both of player has score of 0
-        if self.player1.get_score() == 0 and self.player2.get_score() == 0:
+        # if one of th players has score of 0
+        if self.player1.get_score() == 0 or self.player2.get_score() == 0:
             return True
 
         return False
@@ -53,8 +53,7 @@ class GameBoard:
         elif score["B"] < score["W"]:
             return "W"
         return "Draw"
-    
-    
+
     def get_utility(self, player):
         score = self.get_score()
         if player == "B":

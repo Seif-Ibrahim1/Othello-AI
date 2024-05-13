@@ -1,5 +1,3 @@
-import random
-
 from GameRepresentation import GameBoard
 from Player import Player
 from ComputerAI import Computer
@@ -20,7 +18,11 @@ class Controller:
             color_choice = input("Choose Your Color ('B' or 'W'): ").upper()
             if color_choice in ["B", "W"]:
                 self.current_player = Player(color_choice)
-                self.computer_player = Computer("W") if color_choice == "B" else Computer("B")
+                if color_choice == "B":
+                    self.computer_player = Computer("W")
+                elif color_choice == "W":
+                    self.computer_player = Computer("B")
+                    self.is_player_turn = False
 
                 difficulty_choice = input("Choose Your Difficulty Level ('easy' or 'medium' or 'hard'): ").lower()
                 if difficulty_choice in ["easy", "medium", "hard"]:
@@ -30,7 +32,7 @@ class Controller:
                         self.computer_player.set_depth(2)
                     elif difficulty_choice == "easy":
                         self.computer_player.set_depth(1)
-                    
+
                     break
                 else:
                     print("Invalid Difficulty Choice!")
@@ -38,6 +40,11 @@ class Controller:
                 print("Invalid Color Choice!")
 
     def get_user_move(self):
+        available_moves = self.move.get_available_moves(self.current_player)
+        if not available_moves:
+            print("You don't have available moves! Skipping your turn!")
+            return None
+
         while True:
             try:
                 row = int(input("Enter row (0-7): "))
@@ -49,7 +56,6 @@ class Controller:
             except ValueError:
                 print("Invalid move. Try again.")
 
-
     def play(self):
         print("Welcome To Othello Game!")
         # first choose the color and the difficulty level
@@ -60,6 +66,10 @@ class Controller:
         while not self.game.is_game_over():
             if self.is_player_turn:
                 print(f"Your Turn :")
+                if self.get_user_move() is None:
+                    self.is_player_turn = False
+                    continue
+
                 row, col = self.get_user_move()
                 self.move.move(row, col, self.current_player)
             else:
@@ -76,8 +86,8 @@ class Controller:
             # Display the updated board
             print("Updated Board:")
             self.game.print_board()
-            print("Scores :")
-            score = self.game.get_score()
+            # print("Scores :")
+            # score = self.game.get_score()
             # print(f"Black Score = {score["B"]}\nWhite Score = {score['W']}")
 
             # change turns
