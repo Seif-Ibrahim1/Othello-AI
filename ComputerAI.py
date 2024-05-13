@@ -2,12 +2,13 @@ import math
 from GameRepresentation import GameBoard
 from Player import Player
 class Computer(Player):
-    def __init__(self, color):
+    def __init__(self, color, depth=1):
         super().__init__(color)
+        self.depth = depth
 
     def alpha_beta(self, board, depth, alpha, beta, maximizing):
         if depth == 0 or board.is_game_over():
-            pass       # return valuation of position
+            return 1     # return valuation of position
 
         if maximizing:
             maxVal = -math.inf
@@ -17,6 +18,7 @@ class Computer(Player):
                     if board.is_valid_move(i, j, self):
                         available_moves.append((i, j))
 
+            played_moves = {}
             for move in available_moves:
                 tmpBoard = GameBoard()
                 tmpBoard = board
@@ -24,10 +26,12 @@ class Computer(Player):
                 tmpBoard.board = board.board.copy()
                 tmpBoard.move(move[0], move[1], self)
                 val = self.alpha_beta(tmpBoard, depth - 1, alpha, beta, False)
+                played_moves[val] = move
                 maxVal = max(maxVal, val)
                 alpha = max(alpha, val)
                 if beta <= alpha:
                     break
+            self.played = move
             return maxVal
     
         else:
@@ -50,3 +54,7 @@ class Computer(Player):
                 if beta <= alpha:
                     break
             return minVal
+        
+    def play(self, board):
+        self.alpha_beta(board, self.depth, -math.inf, math.inf, True)
+        return self.played
