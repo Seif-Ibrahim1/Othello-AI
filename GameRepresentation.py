@@ -28,15 +28,6 @@ class GameBoard:
                     print("B", end=" ")
             print()
 
-    def move(self, x, y, Player):
-        if self.is_valid_move(x, y, Player):
-            self.board[x][y] = Player.color
-            flipped_pieces = self.getFlippedPieces(x , y , Player)
-            self.flip_pieces(x , y , flipped_pieces , Player)
-            return True
-        else:
-            return False
-
     def is_game_over(self):
         # if all the cells are filled
         if "-" not in self.board:
@@ -45,6 +36,7 @@ class GameBoard:
         if self.player1.get_score() == 0 and self.player2.get_score() == 0:
             return True
 
+        return False
         return False
 
     def is_valid_move(self, x, y, Player):
