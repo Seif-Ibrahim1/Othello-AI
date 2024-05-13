@@ -8,7 +8,7 @@ class Controller:
     def __init__(self):
         self.game = GameBoard()
         self.current_player = Player
-        self.computer_player = None
+        self.computer_player = Player
         self.is_player_turn = True
         self.difficulty_level = "medium"
 
@@ -17,7 +17,7 @@ class Controller:
             color_choice = input("Choose Your Color ('B' or 'W'): ").upper()
             if color_choice in ["B", "W"]:
                 self.current_player = Player(color_choice)
-                self.computer_player = "W" if color_choice == "B" else "B"
+                self.computer_player = Player("W") if color_choice == "B" else Player("B")
             else:
                 print("Invalid Color Choice!")
 
