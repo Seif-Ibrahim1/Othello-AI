@@ -66,11 +66,12 @@ class Controller:
         while not self.game.is_game_over():
             if self.is_player_turn:
                 print(f"Your Turn :")
-                if self.get_user_move() is None:
+                coords = self.get_user_move()
+                if coords is None:
                     self.is_player_turn = False
                     continue
 
-                row, col = self.get_user_move()
+                row, col = coords
                 self.move.move(row, col, self.current_player)
             else:
                 print(f"Computer's Turn :")
