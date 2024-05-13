@@ -3,6 +3,7 @@ import random
 from GameRepresentation import GameBoard
 from Player import Player
 from ComputerAI import Computer
+from Move import Move
 
 
 class Controller:
@@ -12,6 +13,7 @@ class Controller:
         self.computer_player = Computer
         self.is_player_turn = True
         self.difficulty_level = "medium"
+        self.move = Move(self.game.board)
 
     def color_and_difficulty(self):
         while True:
@@ -23,11 +25,11 @@ class Controller:
                 difficulty_choice = input("Choose Your Difficulty Level ('easy' or 'medium' or 'hard'): ").lower()
                 if difficulty_choice in ["easy", "medium", "hard"]:
                     if difficulty_choice == "hard":
-                        self.computer_player.depth = 3
+                        self.computer_player.set_depth(3)
                     elif difficulty_choice == "medium":
-                        self.computer_player.depth = 2
+                        self.computer_player.set_depth(2)
                     elif difficulty_choice == "easy":
-                        self.computer_player.depth = 1
+                        self.computer_player.set_depth(1)
                     
                     break
                 else:
@@ -40,40 +42,13 @@ class Controller:
             try:
                 row = int(input("Enter row (0-7): "))
                 col = int(input("Enter column (0-7): "))
-                if self.game.is_valid_move(row, col, self.current_player):
+                if self.move.is_valid_move(row, col, self.current_player):
                     return row, col
                 else:
                     print("Invalid move. Try again.")
             except ValueError:
                 print("Invalid move. Try again.")
 
-    def get_computer_move(self):
-        while True:
-            if self.difficulty_level == "easy":
-                return self.get_easy_move()
-            elif self.difficulty_level == "medium":
-                return self.get_medium_move()
-            elif self.difficulty_level == "hard":
-                # by using alpha-beta code
-                return self.get_hard_move()
-
-    # def get_easy_move(self):
-    #     valid_moves = []
-    #     for x in range(8):
-    #         for y in range(8):
-    #             if self.game.is_valid_move(x, y, self.computer_player):
-    #                 valid_moves.append((x, y))
-    #     # select any random valid move
-    #     return random.choice(valid_moves) if valid_moves else None
-
-    # def get_medium_move(self):
-    #     valid_moves = []
-    #     for x in range(8):
-    #         for y in range(8):
-    #             if self.game.is_valid_move(x, y, self.current_player):
-    #                 valid_moves.append((x, y))
-    #     # will add heuristic function
-    #     return valid_moves[0] if valid_moves else None
 
     def play(self):
         print("Welcome To Othello Game!")
@@ -86,7 +61,7 @@ class Controller:
             if self.is_player_turn:
                 print(f"Your Turn :")
                 row, col = self.get_user_move()
-                self.game.move(row, col, self.current_player)
+                self.move.move(row, col, self.current_player)
             else:
                 print(f"Computer's Turn :")
                 coords = self.computer_player.play(self.game)
@@ -96,7 +71,7 @@ class Controller:
                     continue
 
                 row, col = coords
-                self.game.move(row, col, self.computer_player)
+                self.move.move(row, col, self.computer_player)
 
             # Display the updated board
             print("Updated Board:")
