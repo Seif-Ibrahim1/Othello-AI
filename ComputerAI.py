@@ -16,16 +16,7 @@ class Computer(Player):
 
         if maximizing:
             maxVal = -math.inf
-            available_moves = []
-            for i in range(8):
-                for j in range(8):
-                    tmpBoard = GameBoard()
-                    tmpBoard.board = board.board.copy()
-                    tmpBoard.player1 = board.player1
-                    tmpBoard.player2 = board.player2
-                    if tmpBoard.is_valid_move(i, j, self):
-                        available_moves.append((i, j))
-
+            available_moves = board.getAvailableMoves(self)
             print("Available moves: ", available_moves)
             played_moves = {}
             for move in available_moves:
@@ -48,15 +39,7 @@ class Computer(Player):
         else:
             otherPlayer = board.player1 if self.color == board.player2.color else board.player2
             minVal = math.inf
-            available_moves = []
-            for i in range(8):
-                for j in range(8):
-                    tmpBoard = GameBoard()
-                    tmpBoard.board = board.board.copy()
-                    tmpBoard.player1 = board.player1
-                    tmpBoard.player2 = board.player2
-                    if tmpBoard.is_valid_move(i, j, otherPlayer):
-                        available_moves.append((i, j))
+            available_moves = board.getAvailableMoves(otherPlayer)
             for move in available_moves:
                 tmpBoard = GameBoard()
                 tmpBoard = board
