@@ -3,9 +3,8 @@ from GameRepresentation import GameBoard
 from Player import Player
 from Move import Move
 class Computer(Player):
-    def __init__(self, color, depth=3):
+    def __init__(self, color):
         super().__init__(color)
-        self.depth = depth
         self.played = None
 
     def alpha_beta(self, board, depth, alpha, beta, maximizing):
