@@ -27,9 +27,9 @@ class Controller:
                 difficulty_choice = input("Choose Your Difficulty Level ('easy' or 'medium' or 'hard'): ").lower()
                 if difficulty_choice in ["easy", "medium", "hard"]:
                     if difficulty_choice == "hard":
-                        self.computer_player.set_depth(3)
+                        self.computer_player.set_depth(5)
                     elif difficulty_choice == "medium":
-                        self.computer_player.set_depth(2)
+                        self.computer_player.set_depth(3)
                     elif difficulty_choice == "easy":
                         self.computer_player.set_depth(1)
 
@@ -69,6 +69,9 @@ class Controller:
                 coords = self.get_user_move()
                 if coords is None:
                     self.is_player_turn = False
+                    if not self.move.get_available_moves(self.computer_player):
+                        break
+
                     continue
 
                 row, col = coords
@@ -79,6 +82,8 @@ class Controller:
                 if coords is None:
                     print("Computer has no valid moves. Skipping turn.")
                     self.is_player_turn = not self.is_player_turn
+                    if not self.move.get_available_moves(self.current_player):
+                        break
                     continue
 
                 row, col = coords
@@ -87,9 +92,11 @@ class Controller:
             # Display the updated board
             print("Updated Board:")
             self.game.print_board()
-            # print("Scores :")
-            # score = self.game.get_score()
-            # print(f"Black Score = {score["B"]}\nWhite Score = {score['W']}")
+            print("Scores :")
+            score = self.game.get_score()
+            print(f"Player 1 (Black) : {score['B']}")
+            print(f"Player 2 (White) : {score['W']}")
+            
 
             # change turns
             self.is_player_turn = not self.is_player_turn
@@ -99,9 +106,9 @@ class Controller:
         if winner == "Draw":
             print("It's a Draw!")
         else:
-            if self.current_player == "W" and winner == "W":
+            if self.current_player.color == "W" and winner == "W":
                 print("YOU'RE THE WINNER!")
-            elif self.current_player == "B" and winner == "B":
+            elif self.current_player.color == "B" and winner == "B":
                 print("YOU'RE THE WINNER!")
             else:
                 print("COMPUTER IS THE WINNER!")
