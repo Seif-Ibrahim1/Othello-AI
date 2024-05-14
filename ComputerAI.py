@@ -15,16 +15,20 @@ class Computer(Player):
             else:
                 return board.get_utility(board.player1 if self.color == board.player2.color else board.player2)    # return valuation of position
 
+
         if maximizing:
             maxVal = -math.inf
             
             available_moves = Move(board.board).get_available_moves(self)
+            if not available_moves:
+                return self.alpha_beta(board, 0, alpha, beta, True)
             played_moves = {}
             for move in available_moves:
                 tmpBoard = GameBoard()
-                tmpBoard = board
                 # copy the ND array by value
                 tmpBoard.board = board.board.copy()
+                tmpBoard.player1 = board.player1
+                tmpBoard.player2 = board.player2
                 Move(tmpBoard.board).move(move[0], move[1], self)
                 val = self.alpha_beta(tmpBoard, depth - 1, alpha, beta, False)
                 played_moves[val] = move
@@ -41,11 +45,13 @@ class Computer(Player):
             otherPlayer = board.player1 if self.color == board.player2.color else board.player2
             minVal = math.inf
             available_moves = Move(board.board).get_available_moves(otherPlayer)
+            if not available_moves:
+                return self.alpha_beta(board, 0, alpha, beta, False)
             for move in available_moves:
                 tmpBoard = GameBoard()
-                tmpBoard = board
-                # copy the ND array by value
                 tmpBoard.board = board.board.copy()
+                tmpBoard.player1 = board.player1
+                tmpBoard.player2 = board.player2
                 Move(tmpBoard.board).move(move[0], move[1], otherPlayer)
                 val = self.alpha_beta(tmpBoard, depth - 1, alpha, beta ,True)
                 minVal = min(minVal, val)
@@ -58,6 +64,7 @@ class Computer(Player):
         self.depth = depth
         
     def play(self, board):
+        self.played = None
         tmpBoard = GameBoard()
         tmpBoard.board = board.board.copy()
         tmpBoard.player1 = board.player1
