@@ -9,7 +9,7 @@ class OthelloGUI:
     def __init__(self, master):
         self.master = master
         master.title("Othello Game")
-        master.geometry("850x900")
+        master.geometry("680x770")  # Adjusted window size
         master.config(bg="#0e2137")  # Dark blue background color
 
         self.game = GameBoard()
@@ -19,37 +19,43 @@ class OthelloGUI:
         self.move = Move(self.game.board)
         self.game_over = False
 
-        self.color_label = tk.Label(master, text="Choose Your Color:", font=("Helvetica", 30), bg="#0e2137", fg="white")
-        self.color_label.grid(row=0, column=0, padx=20, pady=10, sticky="ew")
+        self.color_label = tk.Label(master, text="Choose Your Color:", font=("Helvetica", 24), bg="#0e2137", fg="white")
+        self.color_label.grid(row=0, column=0, padx=20, pady=(40, 10), sticky="ew")  # Increased top padding
 
-        self.difficulty_label = tk.Label(master, text="Choose Your Difficulty Level:", font=("Helvetica", 30), bg="#0e2137", fg="white")
+        self.difficulty_label = tk.Label(master, text="Choose Your Difficulty Level:", font=("Helvetica", 24), bg="#0e2137", fg="white")
         self.difficulty_label.grid(row=1, column=0, padx=20, pady=10, sticky="ew")
 
         self.color_var = tk.StringVar(master)
         self.color_var.set("Black")
         self.color_menu = OptionMenu(master, self.color_var, "Black", "White")
-        self.color_menu.config(font=("Helvetica", 24), bg="#0e2137", fg="white", width=10)  # Large dropdown items
-        self.color_menu.grid(row=0, column=1, padx=20, pady=10, sticky="ew")
+        self.color_menu.config(font=("Helvetica", 20), bg="#0e2137", fg="white", width=10)  # Large dropdown items
+        self.color_menu.grid(row=0, column=1, padx=20, pady=(40, 10), sticky="ew")  # Increased top padding
 
         self.difficulty_var = tk.StringVar(master)
         self.difficulty_var.set("Medium")
         self.difficulty_menu = OptionMenu(master, self.difficulty_var, "Easy", "Medium", "Hard")
-        self.difficulty_menu.config(font=("Helvetica", 24), bg="#0e2137", fg="white", width=10)  # Large dropdown items
+        self.difficulty_menu.config(font=("Helvetica", 20), bg="#0e2137", fg="white", width=10)  # Large dropdown items
         self.difficulty_menu.grid(row=1, column=1, padx=20, pady=10, sticky="ew")
 
-        self.submit_button = tk.Button(master, text="Start Game", command=self.start_game, font=("Helvetica", 24))
+        self.submit_button = tk.Button(master, text="Start Game", command=self.start_game, font=("Helvetica", 20))
         self.submit_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
 
-        self.board_canvas = tk.Canvas(master, width=800, height=800, bg="#0e2137")  # Dark blue table color
-        self.board_canvas.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="nsew")
+        self.board_canvas = tk.Canvas(master, width=640, height=640, bg="#0e2137")  # Adjusted width and height
+        self.board_canvas.grid(row=3, column=0, columnspan=2, padx=20, pady=(10, 20), sticky="nsew")  # Adjusted padx and pady
         self.board_buttons = [[None] * 8 for _ in range(8)]
         self.available_moves = []  # List to store the IDs of available move indicators
 
-        self.info_label = tk.Label(master, text="", font=("Helvetica", 24), bg="#0e2137", fg="white")
-        self.info_label.grid(row=4, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
+        self.info_label = tk.Label(master, text="", font=("Helvetica", 20), bg="#0e2137", fg="white")
+        self.info_label.grid(row=4, column=0, columnspan=2, padx=20, pady=(0, 20), sticky="ew")  # Removed bottom padding
+
+        # Configure row and column weights
+        master.rowconfigure(3, weight=1)  # Adjusted weight
+        master.columnconfigure(0, weight=1)  # Adjusted weight
+        master.columnconfigure(1, weight=1)  # Adjusted weight
 
         # Hide the board initially
         self.board_canvas.grid_remove()
+
 
     def start_game(self):
         color_choice = self.color_var.get()
@@ -89,12 +95,13 @@ class OthelloGUI:
             self.computer_play()
 
     def create_board_buttons(self):
-        cell_size = 100
+        cell_size = 80  # Adjust the cell size to make the board smaller
         for row in range(8):
             for col in range(8):
                 x0, y0 = col * cell_size, row * cell_size
                 x1, y1 = x0 + cell_size, y0 + cell_size
                 self.board_canvas.create_rectangle(x0, y0, x1, y1, outline="black", fill="#0e2137")
+                radius = 30  # Adjust the radius of the circle
                 self.board_buttons[row][col] = self.board_canvas.create_oval(x0 + 5, y0 + 5, x1 - 5, y1 - 5, fill="#0e2137")
                 self.board_canvas.tag_bind(self.board_buttons[row][col], "<Button-1>",
                                         lambda event, row=row, col=col: self.make_move(row, col))
@@ -102,6 +109,7 @@ class OthelloGUI:
     def make_move(self, row, col):
         if self.is_player_turn:
             if self.move.is_valid_move(row, col, self.current_player):
+                print(f"Player played: {row}, {col}")
                 self.move.move(row, col, self.current_player)
                 self.is_player_turn = False
                 self.update_board_display()
@@ -159,18 +167,28 @@ class OthelloGUI:
                 else:
                     self.board_canvas.itemconfig(self.board_buttons[row][col], fill="#0e2137")  # Dark blue for empty cells
 
-        # Highlight available moves
+         # Highlight available moves
         available_moves = self.move.get_available_moves(self.current_player)
         for move in available_moves:
             row, col = move
-            x, y = col * 100, row * 100
-            radius = 40  # Adjust the radius of the circle
-            move_id = self.board_canvas.create_oval(x + 50 - radius, y + 50 - radius, x + 50 + radius, y + 50 + radius,
-                                                    outline="dark gray", width=5)  # Change the color and width here
+            x, y = col * 80, row * 80  # Adjusted cell size
+            cell_center_x = x + 40  # Adjusted to the center of the cell
+            cell_center_y = y + 40  # Adjusted to the center of the cell
+            radius = 30  # Adjusted circle radius
+            move_id = self.board_canvas.create_oval(cell_center_x - radius, cell_center_y - radius,
+                                                    cell_center_x + radius, cell_center_y + radius,
+                                                    outline="light gray", width=5)  # Light gray outline
             self.available_moves.append(move_id)
 
-    def update_info_label(self, message):
-        self.info_label.config(text=message)
+        scores = self.game.get_score()
+        if self.current_player.color == "B":
+            self.update_info_label("Player's turn", scores)
+        else:
+            self.update_info_label("Computer's turn", scores)
+
+    def update_info_label(self, message, scores):
+        score_text = f"Player: {scores[self.current_player.color]}   Computer: {scores[self.computer_player.color]}"  # Construct score text
+        self.info_label.config(text=message + "\n" + score_text)  # Concatenate with message and set as label text
 
     def show_alert(self, message):
         messagebox.showinfo("Alert", message)
