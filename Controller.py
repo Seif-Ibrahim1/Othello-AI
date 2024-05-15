@@ -68,10 +68,7 @@ class Controller:
                 print(f"Your Turn :")
                 coords = self.get_user_move()
                 if coords is None:
-                    self.is_player_turn = False
-                    if not self.move.get_available_moves(self.computer_player):
-                        break
-
+                    self.is_player_turn = not self.is_player_turn
                     continue
 
                 row, col = coords
