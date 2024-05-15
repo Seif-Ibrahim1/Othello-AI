@@ -75,7 +75,7 @@ class OthelloGUI:
         elif difficulty_choice == "Easy":
             self.computer_player.set_depth(1)
 
-        if self.current_player == Player("W"):
+        if self.current_player.color == "W":
             self.is_player_turn = False
 
         # Remove color and difficulty selection widgets

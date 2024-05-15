@@ -9,18 +9,14 @@ class Computer(Player):
 
     def alpha_beta(self, board, depth, alpha, beta, maximizing):
         if depth == 0 or board.is_game_over():
-            if maximizing:
-                return board.get_utility(self)
-            else:
-                return board.get_utility(board.player1 if self.color == board.player2.color else board.player2)    # return valuation of position
-
+            return board.get_utility(self.color) 
 
         if maximizing:
             maxVal = -math.inf
             
             available_moves = Move(board.board).get_available_moves(self)
             if not available_moves:
-                return self.alpha_beta(board, 0, alpha, beta, True)
+                return self.alpha_beta(board, depth-1, alpha, beta, False)
             played_moves = {}
             for move in available_moves:
                 tmpBoard = GameBoard()
@@ -45,7 +41,8 @@ class Computer(Player):
             minVal = math.inf
             available_moves = Move(board.board).get_available_moves(otherPlayer)
             if not available_moves:
-                return self.alpha_beta(board, 0, alpha, beta, False)
+                return self.alpha_beta(board, depth-1, alpha, beta, True)
+            
             for move in available_moves:
                 tmpBoard = GameBoard()
                 tmpBoard.board = board.board.copy()
@@ -57,6 +54,7 @@ class Computer(Player):
                 beta = min(beta, val)
                 if beta <= alpha:
                     break
+                
             return minVal
         
     def set_depth(self, depth):
