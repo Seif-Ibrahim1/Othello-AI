@@ -192,7 +192,3 @@ class OthelloGUI:
 
     def show_alert(self, message):
         messagebox.showinfo("Alert", message)
-
-root = tk.Tk()
-othello_gui = OthelloGUI(root)
-root.mainloop()
